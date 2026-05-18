@@ -20,3 +20,7 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# workflow file pending an auth refresh with workflow scope
+*.pending
+
