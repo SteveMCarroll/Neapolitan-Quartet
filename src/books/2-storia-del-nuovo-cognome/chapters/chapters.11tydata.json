@@ -1,0 +1,10 @@
+{
+  "layout": "layouts/chapter.njk",
+  "book": 2,
+  "part": "Giovinezza",
+  "tags": ["book2chapters"],
+  "permalink": "/books/2-storia-del-nuovo-cognome/chapters/{{ chapter }}/",
+  "eleventyComputed": {
+    "title": "{% if title %}{{ title }}{% else %}Chapter {{ chapter }}{% endif %}"
+  }
+}

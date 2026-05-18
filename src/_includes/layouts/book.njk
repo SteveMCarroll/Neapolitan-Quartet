@@ -1,0 +1,35 @@
+---
+layout: layouts/base.njk
+---
+{% set book = books.books | findBook(bookId) %}
+
+<article class="book-page">
+  <p class="eyebrow">Book {{ book.id }}</p>
+  <h1 class="book-title">
+    <span class="title-it">{{ book.italianTitle }}</span>
+    <span class="title-en">{{ book.englishTitle }}</span>
+  </h1>
+  {% if book.subtitle %}<p class="book-subtitle">{{ book.subtitle }}</p>{% endif %}
+
+  {% if book.status == "placeholder" %}
+    <div class="callout callout-info">
+      <p>{{ book.placeholderNote }}</p>
+      <p>
+        <a class="cta" href="{{ book.externalUrl }}" rel="noopener">
+          Read the LitCharts guide ↗
+        </a>
+      </p>
+    </div>
+  {% elif book.status == "not-started" %}
+    <div class="callout callout-muted">
+      <p>Summaries for this book haven't been written yet.</p>
+      <p>Come back once book {{ book.id - 1 }} is finished.</p>
+    </div>
+  {% else %}
+    {{ content | safe }}
+  {% endif %}
+
+  <nav class="book-nav">
+    <a href="{{ '/' | url }}">← All books</a>
+  </nav>
+</article>

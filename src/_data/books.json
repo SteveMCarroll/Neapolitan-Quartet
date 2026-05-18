@@ -1,0 +1,42 @@
+{
+  "books": [
+    {
+      "id": 1,
+      "slug": "1-l-amica-geniale",
+      "italianTitle": "L'amica geniale",
+      "englishTitle": "My Brilliant Friend",
+      "subtitle": "Infanzia · Adolescenza",
+      "status": "placeholder",
+      "placeholderNote": "LitCharts already has a complete guide for book 1 — we link out instead of duplicating.",
+      "externalUrl": "https://www.litcharts.com/lit/my-brilliant-friend"
+    },
+    {
+      "id": 2,
+      "slug": "2-storia-del-nuovo-cognome",
+      "italianTitle": "Storia del nuovo cognome",
+      "englishTitle": "The Story of a New Name",
+      "subtitle": "Giovinezza",
+      "status": "in-progress",
+      "chapterCount": 125,
+      "parts": [
+        { "name": "Giovinezza", "italianName": "Giovinezza", "from": 1, "to": 125 }
+      ]
+    },
+    {
+      "id": 3,
+      "slug": "3-storia-di-chi-fugge-e-di-chi-resta",
+      "italianTitle": "Storia di chi fugge e di chi resta",
+      "englishTitle": "Those Who Leave and Those Who Stay",
+      "subtitle": "Tempo di mezzo",
+      "status": "not-started"
+    },
+    {
+      "id": 4,
+      "slug": "4-storia-della-bambina-perduta",
+      "italianTitle": "Storia della bambina perduta",
+      "englishTitle": "The Story of the Lost Child",
+      "subtitle": "Maturità · Vecchiaia",
+      "status": "not-started"
+    }
+  ]
+}

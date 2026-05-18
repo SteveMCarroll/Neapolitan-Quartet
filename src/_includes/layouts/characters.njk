@@ -1,0 +1,24 @@
+---
+layout: layouts/base.njk
+---
+{% set bookData = books.books | findBook(book) %}
+{% set bookHome = '/books/' + bookData.slug + '/' %}
+
+<article class="characters-page">
+  <header class="character-index-header">
+    <p class="eyebrow"><a href="{{ bookHome | url }}">{{ bookData.italianTitle }}</a></p>
+    <h1>Characters</h1>
+    <p class="muted">
+      What's known about each character through the end of book {{ bookData.id }}.
+      <strong>No spoilers for later books.</strong>
+    </p>
+  </header>
+
+  <section class="characters-content">
+    {{ content | safe }}
+  </section>
+
+  <nav class="book-nav">
+    <a href="{{ bookHome | url }}">← {{ bookData.italianTitle }}</a>
+  </nav>
+</article>

@@ -1,0 +1,6 @@
+{
+  "layout": "layouts/character.njk",
+  "book": 2,
+  "tags": ["book2characters"],
+  "permalink": "/books/2-storia-del-nuovo-cognome/characters/{{ slug }}/"
+}

@@ -1,0 +1,67 @@
+---
+layout: layouts/base.njk
+---
+{% set bookData = books.books | findBook(book) %}
+{% set chapterCount = bookData.chapterCount %}
+{% set prevCh = chapter - 1 if chapter > 1 else null %}
+{% set nextCh = chapter + 1 if chapter < chapterCount else null %}
+{% set bookHome = '/books/' + bookData.slug + '/' %}
+
+<article class="chapter-page">
+  <header class="chapter-header">
+    <p class="eyebrow">
+      <a href="{{ bookHome | url }}">{{ bookData.italianTitle }}</a>
+      {% if part %} · {{ part }}{% endif %}
+    </p>
+    <h1>Capitolo {{ chapter }} <span class="chapter-of">/ {{ chapterCount }}</span></h1>
+    {% if title and title != ("Chapter " + (chapter|string)) %}
+      <p class="chapter-subtitle">{{ title }}</p>
+    {% endif %}
+  </header>
+
+  <section class="chapter-body">
+    {{ content | safe }}
+  </section>
+
+  {% if characters and characters.length %}
+  <section class="chapter-characters">
+    <h2>Characters in this chapter</h2>
+    <ul class="chip-list">
+      {% for slug in characters %}
+        <li><a class="chip" href="{{ (bookHome + 'characters/' + slug + '/') | url }}">{{ slug | replace('-', ' ') }}</a></li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+</article>
+
+<nav class="chapter-nav" aria-label="Chapter navigation">
+  {% if prevCh %}
+    <a class="chapter-nav-prev" href="{{ (bookHome + 'chapters/' + prevCh + '/') | url }}" rel="prev">
+      <span class="chapter-nav-label">◀ Prev</span>
+      <span class="chapter-nav-target">Cap. {{ prevCh }}</span>
+    </a>
+  {% else %}
+    <span class="chapter-nav-prev chapter-nav-disabled" aria-hidden="true">
+      <span class="chapter-nav-label">◀ Prev</span>
+      <span class="chapter-nav-target">—</span>
+    </span>
+  {% endif %}
+
+  <a class="chapter-nav-toc" href="{{ bookHome | url }}">
+    <span class="chapter-nav-label">Contents</span>
+    <span class="chapter-nav-target">Book {{ book }}</span>
+  </a>
+
+  {% if nextCh %}
+    <a class="chapter-nav-next" href="{{ (bookHome + 'chapters/' + nextCh + '/') | url }}" rel="next">
+      <span class="chapter-nav-label">Next ▶</span>
+      <span class="chapter-nav-target">Cap. {{ nextCh }}</span>
+    </a>
+  {% else %}
+    <span class="chapter-nav-next chapter-nav-disabled" aria-hidden="true">
+      <span class="chapter-nav-label">Next ▶</span>
+      <span class="chapter-nav-target">—</span>
+    </span>
+  {% endif %}
+</nav>

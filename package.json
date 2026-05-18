@@ -1,0 +1,18 @@
+{
+  "name": "neapolitan-chapters",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Per-chapter English summaries, character guide, and key Italian vocabulary for Elena Ferrante's Neapolitan Quartet. Reading aid only — the underlying Italian text is never committed.",
+  "type": "module",
+  "scripts": {
+    "check": "node tools/check-no-source.mjs",
+    "extract": "node tools/extract-epub.mjs",
+    "dev": "npm run check && eleventy --serve --quiet",
+    "build": "npm run check && eleventy",
+    "clean": "node -e \"import('node:fs').then(fs => fs.rmSync('_site', { recursive: true, force: true }))\""
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0",
+    "unzipper": "^0.12.3"
+  }
+}
