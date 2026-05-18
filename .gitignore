@@ -1,0 +1,22 @@
+# --- Copyright firewall: never commit the source text ---
+# EPUBs anywhere in the tree
+*.epub
+# Any expanded EPUB scratch directory
+_epub_extract/
+# Extracted Italian per-chapter text the EPUB extractor writes
+tools/source/
+
+# --- Build output ---
+_site/
+
+# --- Tooling ---
+node_modules/
+.eleventy-cache/
+.cache/
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
