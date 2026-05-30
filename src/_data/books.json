@@ -28,7 +28,11 @@
       "italianTitle": "Storia di chi fugge e di chi resta",
       "englishTitle": "Those Who Leave and Those Who Stay",
       "subtitle": "Tempo di mezzo",
-      "status": "not-started"
+      "status": "in-progress",
+      "chapterCount": 123,
+      "parts": [
+        { "name": "Tempo di mezzo", "italianName": "Tempo di mezzo", "from": 1, "to": 123 }
+      ]
     },
     {
       "id": 4,

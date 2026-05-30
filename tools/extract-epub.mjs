@@ -26,6 +26,11 @@ const BOOKS = {
     epub: "storia_del_nuovo_cognome_ferrante_elena.epub",
     title: "Storia del nuovo cognome",
   },
+  3: {
+    slug: "book-3",
+    epub: "Ferrante Elena - Storia di chi fugge e di chi resta.epub",
+    title: "Storia di chi fugge e di chi resta",
+  },
 };
 
 const bookId = Number(process.argv[2] ?? 2);
@@ -121,22 +126,46 @@ function childrenOf(node) {
 }
 
 function parseToc(ncxXml) {
-  // We extract a flat list of parts; each part has a label and the chapters
-  // (leaf navPoints with numeric labels) directly under it.
+  // Returns a flat list of parts; each part has a label and the chapters
+  // (numeric-labeled navPoints) belonging to it.
+  //
+  // Handles two TOC shapes:
+  //   Nested (book 2): parts at top level, chapters as their children.
+  //   Flat   (book 3): parts and chapters are all siblings at top level;
+  //                    each numeric navPoint is assigned to the most recent
+  //                    non-numeric navPoint above it.
   const parts = [];
-  // Pull the navMap body so we don't accidentally include outer elements.
   const navMapMatch = ncxXml.match(/<navMap>([\s\S]*?)<\/navMap>/);
   const navBody = navMapMatch ? navMapMatch[1] : ncxXml;
+
+  let currentPart = null;
   for (const node of topLevelNavPoints(navBody)) {
     const { label, href } = attrOfNavPoint(node);
     const kids = childrenOf(node);
-    const chapters = [];
-    for (const kid of kids) {
-      const k = attrOfNavPoint(kid);
-      const m = k.label && k.label.match(/^(\d+)\.?$/);
-      if (m && k.href) chapters.push({ chapter: Number(m[1]), label: k.label, href: k.href });
+    const numericMatch = label && label.match(/^(\d+)\.?$/);
+
+    if (kids.length > 0) {
+      // Nested style: this is a part with chapter children.
+      const chapters = [];
+      for (const kid of kids) {
+        const k = attrOfNavPoint(kid);
+        const m = k.label && k.label.match(/^(\d+)\.?$/);
+        if (m && k.href) chapters.push({ chapter: Number(m[1]), label: k.label, href: k.href });
+      }
+      parts.push({ part: label, href, chapters });
+      currentPart = null;
+    } else if (numericMatch && href) {
+      // Flat style: chapter as top-level sibling. Attach to currentPart.
+      if (!currentPart) {
+        currentPart = { part: "(Parte unica)", href: null, chapters: [] };
+        parts.push(currentPart);
+      }
+      currentPart.chapters.push({ chapter: Number(numericMatch[1]), label, href });
+    } else {
+      // Flat style: a non-numeric sibling — treat as a new part header.
+      currentPart = { part: label, href, chapters: [] };
+      parts.push(currentPart);
     }
-    parts.push({ part: label, href, chapters });
   }
   return parts;
 }

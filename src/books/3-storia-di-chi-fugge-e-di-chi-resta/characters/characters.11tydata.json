@@ -1,0 +1,6 @@
+{
+  "layout": "layouts/character.njk",
+  "book": 3,
+  "tags": ["book3characters"],
+  "permalink": "/books/3-storia-di-chi-fugge-e-di-chi-resta/characters/{{ slug }}/"
+}
