@@ -1,0 +1,10 @@
+{
+  "layout": "layouts/chapter.njk",
+  "book": 3,
+  "part": "Tempo di mezzo",
+  "tags": ["book3chapters"],
+  "permalink": "/books/3-storia-di-chi-fugge-e-di-chi-resta/chapters/{{ chapter }}/",
+  "eleventyComputed": {
+    "title": "{% if title %}{{ title }}{% else %}Chapter {{ chapter }}{% endif %}"
+  }
+}
