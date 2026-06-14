@@ -289,6 +289,7 @@ a {
   vertical-align: top;
   padding: 0.45rem 0.55rem;
   border-bottom: 1px solid var(--color-border);
+  overflow-wrap: anywhere;
 }
 .chapter-body th {
   font-family: var(--font-ui);
@@ -300,7 +301,6 @@ a {
 }
 .chapter-body td:first-child {
   font-weight: 600;
-  white-space: nowrap;
 }
 .chapter-body em { color: inherit; }
 .chapter-body blockquote {
