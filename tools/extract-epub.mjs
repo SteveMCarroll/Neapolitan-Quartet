@@ -31,6 +31,11 @@ const BOOKS = {
     epub: "Ferrante Elena - Storia di chi fugge e di chi resta.epub",
     title: "Storia di chi fugge e di chi resta",
   },
+  4: {
+    slug: "book-4",
+    epub: "Storia_della_bambina_perduta.epub",
+    title: "Storia della bambina perduta",
+  },
 };
 
 const bookId = Number(process.argv[2] ?? 2);
@@ -73,6 +78,19 @@ function stripTags(html) {
     .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function decodeEntities(s) {
+  return (s || "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
     .trim();
 }
 
@@ -192,11 +210,45 @@ function parseToc(ncxXml) {
     return segs.join("/");
   }
 
+  // Short, clean display name for a part (decode entities, drop the
+  // ALL-CAPS subtitle after the first period, Title-Case it).
+  function shortPartName(raw) {
+    const decoded = decodeEntities(raw).replace(/\s+/g, " ").trim();
+    const head = decoded.split(".")[0].trim();
+    // "MATURITÀ" -> "Maturità", "VECCHIAIA" -> "Vecchiaia"
+    return head.charAt(0).toUpperCase() + head.slice(1).toLowerCase();
+  }
+
+  // Split a chapter's stripped text when the EPUB merged the *next* chapter
+  // into the same file. Ferrante's chapters are introduced by a lone numeric
+  // marker line ("83"); the TOC sometimes lists only the first. Returns an
+  // array of { partChapter, text } segments (length 1 when nothing to split).
+  function splitMergedChapters(text, firstChapter) {
+    const lines = text.split("\n");
+    const segments = [];
+    let current = { partChapter: firstChapter, lines: [] };
+    let expectedNext = firstChapter + 1;
+    for (const line of lines) {
+      const m = line.trim().match(/^(\d{1,3})\.?$/);
+      if (m && Number(m[1]) === expectedNext && current.lines.join("").trim()) {
+        segments.push(current);
+        current = { partChapter: expectedNext, lines: [] };
+        expectedNext += 1;
+        continue;
+      }
+      current.lines.push(line);
+    }
+    segments.push(current);
+    return segments.map((s) => ({ partChapter: s.partChapter, text: s.lines.join("\n").trim() }));
+  }
+
   const manifest = { book: cfg.slug, title: cfg.title, parts: [] };
   let totalChapters = 0;
+  let globalChapter = 0;
   for (const part of parts) {
     if (!part.chapters.length) continue;
-    const partInfo = { name: part.part, chapters: [] };
+    const partName = shortPartName(part.part);
+    const partInfo = { name: partName, rawName: decodeEntities(part.part), chapters: [] };
     for (const ch of part.chapters) {
       const resolved = resolveHref(ch.href);
       const html = files[resolved];
@@ -204,13 +256,27 @@ function parseToc(ncxXml) {
         console.warn(`  ! missing file for chapter ${ch.chapter}: ${resolved}`);
         continue;
       }
-      const text = stripTags(html);
-      const padded = String(ch.chapter).padStart(3, "0");
-      const filename = `${padded}.txt`;
-      const header = `# ${cfg.title}\n# Part: ${part.part}\n# Chapter: ${ch.chapter}\n# Source: ${resolved}\n\n`;
-      await fs.writeFile(path.join(outDir, filename), header + text + "\n", "utf8");
-      partInfo.chapters.push({ chapter: ch.chapter, file: filename, words: text.split(/\s+/).length });
-      totalChapters++;
+      const stripped = stripTags(html);
+      const segments = splitMergedChapters(stripped, ch.chapter);
+      if (segments.length > 1) {
+        console.log(`  ↳ split merged file ${resolved} into part-chapters ${segments.map((s) => s.partChapter).join(", ")}`);
+      }
+      for (const seg of segments) {
+        globalChapter += 1;
+        const padded = String(globalChapter).padStart(3, "0");
+        const filename = `${padded}.txt`;
+        const header =
+          `# ${cfg.title}\n# Part: ${partName}\n# Global chapter: ${globalChapter}\n` +
+          `# Part chapter: ${seg.partChapter}\n# Source: ${resolved}\n\n`;
+        await fs.writeFile(path.join(outDir, filename), header + seg.text + "\n", "utf8");
+        partInfo.chapters.push({
+          globalChapter,
+          partChapter: seg.partChapter,
+          file: filename,
+          words: seg.text.split(/\s+/).length,
+        });
+        totalChapters++;
+      }
     }
     manifest.parts.push(partInfo);
   }
@@ -224,7 +290,7 @@ function parseToc(ncxXml) {
     if (html) {
       const text = stripTags(html);
       await fs.writeFile(path.join(outDir, "_recap-book-1.txt"),
-        `# ${cfg.title}\n# Section: ${indicePart.part}\n# Source: ${resolved}\n\n` + text + "\n", "utf8");
+        `# ${cfg.title}\n# Section: ${decodeEntities(indicePart.part)}\n# Source: ${resolved}\n\n` + text + "\n", "utf8");
       manifest.recap = "_recap-book-1.txt";
     }
   }

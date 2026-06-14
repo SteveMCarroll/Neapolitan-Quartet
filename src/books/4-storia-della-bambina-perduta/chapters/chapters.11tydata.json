@@ -1,0 +1,9 @@
+{
+  "layout": "layouts/chapter.njk",
+  "book": 4,
+  "tags": ["book4chapters"],
+  "permalink": "/books/4-storia-della-bambina-perduta/chapters/{{ chapter }}/",
+  "eleventyComputed": {
+    "title": "{% if title %}{{ title }}{% else %}Chapter {{ chapter }}{% endif %}"
+  }
+}

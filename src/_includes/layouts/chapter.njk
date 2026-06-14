@@ -6,6 +6,8 @@ layout: layouts/base.njk
 {% set prevCh = chapter - 1 if chapter > 1 else null %}
 {% set nextCh = chapter + 1 if chapter < chapterCount else null %}
 {% set bookHome = '/books/' + bookData.slug + '/' %}
+{% set displayNum = partChapter if partChapter else chapter %}
+{% set displayTotal = partTotal if partTotal else chapterCount %}
 
 <article class="chapter-page">
   <header class="chapter-header">
@@ -13,7 +15,7 @@ layout: layouts/base.njk
       <a href="{{ bookHome | url }}">{{ bookData.italianTitle }}</a>
       {% if part %} · {{ part }}{% endif %}
     </p>
-    <h1>Capitolo {{ chapter }} <span class="chapter-of">/ {{ chapterCount }}</span></h1>
+    <h1>Capitolo {{ displayNum }} <span class="chapter-of">/ {{ displayTotal }}</span></h1>
     {% if title and title != ("Chapter " + (chapter|string)) %}
       <p class="chapter-subtitle">{{ title }}</p>
     {% endif %}
@@ -39,7 +41,11 @@ layout: layouts/base.njk
   {% if prevCh %}
     <a class="chapter-nav-prev" href="{{ (bookHome + 'chapters/' + prevCh + '/') | url }}" rel="prev">
       <span class="chapter-nav-label">◀ Prev</span>
-      <span class="chapter-nav-target">Cap. {{ prevCh }}</span>
+      <span class="chapter-nav-target">
+        {%- if partChapter -%}
+          {%- if partChapter > 1 %}Cap. {{ partChapter - 1 }}{% else %}Parte prec.{% endif -%}
+        {%- else -%}Cap. {{ prevCh }}{%- endif -%}
+      </span>
     </a>
   {% else %}
     <span class="chapter-nav-prev chapter-nav-disabled" aria-hidden="true">
@@ -56,7 +62,11 @@ layout: layouts/base.njk
   {% if nextCh %}
     <a class="chapter-nav-next" href="{{ (bookHome + 'chapters/' + nextCh + '/') | url }}" rel="next">
       <span class="chapter-nav-label">Next ▶</span>
-      <span class="chapter-nav-target">Cap. {{ nextCh }}</span>
+      <span class="chapter-nav-target">
+        {%- if partChapter -%}
+          {%- if partChapter < displayTotal %}Cap. {{ partChapter + 1 }}{% else %}Parte succ.{% endif -%}
+        {%- else -%}Cap. {{ nextCh }}{%- endif -%}
+      </span>
     </a>
   {% else %}
     <span class="chapter-nav-next chapter-nav-disabled" aria-hidden="true">

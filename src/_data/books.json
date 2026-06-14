@@ -40,7 +40,13 @@
       "italianTitle": "Storia della bambina perduta",
       "englishTitle": "The Story of the Lost Child",
       "subtitle": "Maturità · Vecchiaia",
-      "status": "not-started"
+      "status": "complete",
+      "chapterCount": 165,
+      "parts": [
+        { "name": "Maturità", "italianName": "Maturità. Storia della bambina perduta", "from": 1, "to": 110 },
+        { "name": "Vecchiaia", "italianName": "Vecchiaia. Storia del cattivo sangue", "from": 111, "to": 163 },
+        { "name": "Epilogo", "italianName": "Epilogo. Restituzione", "from": 164, "to": 165 }
+      ]
     }
   ]
 }

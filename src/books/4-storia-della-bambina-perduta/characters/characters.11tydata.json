@@ -1,0 +1,6 @@
+{
+  "layout": "layouts/character.njk",
+  "book": 4,
+  "tags": ["book4characters"],
+  "permalink": "/books/4-storia-della-bambina-perduta/characters/{{ slug }}/"
+}
